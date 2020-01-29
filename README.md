@@ -1,2 +1,5 @@
-# STS347-Spring2020
-A collection of in class code for STS347 during the Spring 2020 semester.
+# STS347
+# Spring 2020
+# Dr. VanKrevelen
+
+This repository will include R scripts from each STS347 class period during Spring 2020.
