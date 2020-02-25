@@ -1,0 +1,76 @@
+---
+title: "Week 3 - Weird R Packages"
+date: "2/18/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# The schrute package
+
+One fun thing about R is that there are just a whole bunch of strange packages
+that people have created and made accessible to others. One example is the
+**schrute** package, which contains the scripts for every episode of The Office
+(U.S. version). Below is a quick glance at what variables are in the data. Check
+out the help menu or use View() to see more.
+
+```{r schrute}
+library(schrute)
+data("theoffice")
+names(theoffice)
+```
+
+The package is meant to be used to practice text mining. Check out the help
+file for the package to learn more about this. In the meantime, we can explore
+the package a bit to learn things about which characters talk most and how that
+varies over season. I'll make use of the **dplyr** and **ggplot2** packages,
+which we will see much more of soon.
+
+```{r explore, message = FALSE}
+library(dplyr)
+library(ggplot2)
+
+# Convert season and episode variables to numeric
+theoffice <- mutate(theoffice, season = as.numeric(season), 
+                    episode = as.numeric(episode))
+
+# Count how often each character speaks during each season
+characters <- group_by(theoffice, season, character) %>%
+  count() %>%
+  arrange(season, desc(n)) %>%
+  ungroup()
+
+# Create a graph showing the top 5 by season
+ggplot(top_n(group_by(characters, season), 5), aes(x = character, y = n)) +
+  geom_col(aes(fill = character)) +
+  facet_wrap(.~season, scales = "free_x") +
+  scale_fill_viridis_d(option = "B") +
+  theme_classic() +
+  labs(title = "Top 5 Characters by Lines Spoken Each Season")
+```
+
+
+# The emojifont pacakge
+
+Let's try adding in another package as well. The character Angela on the
+show has cats that she talks about frequently. Let's make a graph showing how
+often she speaks each season and then use a package called **emojifont** to
+display the points on the graph as cats.
+
+```{r}
+library(emojifont)
+angela <- filter(characters, character == "Angela")
+
+ggplot(angela, aes(x = season, y = n)) + 
+  geom_line() +
+  geom_emoji('cat', x = angela$season, y = angela$n, size = 5) +
+  scale_x_continuous(breaks = 1:9) +
+  labs(title = "How Often Does Angela Speak Each Season?") +
+  theme_classic()
+```
+
+As an extra exercise, you could explore using the sample_n() function from the
+**dplyr** pacakge to generate random quotes from a particular episode, 
+character, or season.

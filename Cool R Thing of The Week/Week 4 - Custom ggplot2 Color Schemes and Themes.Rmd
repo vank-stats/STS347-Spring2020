@@ -1,0 +1,123 @@
+---
+title: "Week 4 - Custom ggplot2 color schemes and themes"
+date: "2/25/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Color schemes
+
+For a long time the default color schemes in ggplot2 weren't very good and often
+didn't work for printing in black and white or for people with various forms of
+color blindness. They have made some improvements, but one easy fix is to use
+the scale_xxx_viridis_c() and scale_xxx_viridis_d() functions that are now part
+of the ggplot2 package.
+
+```{r}
+library(ggplot2)
+library(gridExtra)
+g <- ggplot(mtcars, aes(x = wt, y = mpg, color = factor(gear))) +
+  geom_point(size = 4)
+
+g1 <- g + scale_color_viridis_d(option = "A") + ggtitle("Option A")
+g2 <- g + scale_color_viridis_d(option = "B") + ggtitle("Option B")
+g3 <- g + scale_color_viridis_d(option = "C") + ggtitle("Option C")
+g4 <- g + scale_color_viridis_d(option = "D") + ggtitle("Option D")
+g5 <- g + scale_color_viridis_d(option = "E") + ggtitle("Option E")
+grid.arrange(g + labs(title = "Default"), g1, g2, g3, g4, g5, ncol = 2, nrow = 3)
+```
+
+These can be used for other types of plots as well
+
+```{r}
+g <- ggplot(mtcars, aes(x = gear, fill = factor(carb))) +
+  geom_bar()
+
+g1 <- g + scale_fill_viridis_d(option = "A") + ggtitle("Option A")
+g2 <- g + scale_fill_viridis_d(option = "B") + ggtitle("Option A")
+g3 <- g + scale_fill_viridis_d(option = "C") + ggtitle("Option A")
+g4 <- g + scale_fill_viridis_d(option = "D") + ggtitle("Option A")
+g5 <- g + scale_fill_viridis_d(option = "E") + ggtitle("Option A")
+grid.arrange(g + labs(title = "Default"), g1, g2, g3, g4, g5, ncol = 2, nrow = 3)
+```
+
+However, there are also lots of other packages people have created to allow
+different color schemes.
+
+# The gameofthrones Package
+
+Let's try our bar graphs again but this time with color schemes to match
+different houses in Game of Thrones. First lets look at what palettes are
+available.
+
+```{r}
+library(gameofthrones)
+
+names(got_palettes)
+
+```
+
+Notice that there are usually five or six colors for each, so these may not work
+if you need a lot of colors. Let's try a few of them below though.
+
+```{r}
+g <- ggplot(mtcars, aes(x = gear, fill = factor(carb))) +
+  geom_bar()
+
+g1 <- g + scale_fill_got(option = "white_walkers", discrete = TRUE) + 
+  ggtitle("White Walkers")
+g2 <- g + scale_fill_got(option = "stark", discrete = TRUE) + 
+  ggtitle("House Stark")
+g3 <- g + scale_fill_got(option = "lannister", discrete = TRUE) + 
+  ggtitle("House Lannister")
+g4 <- g + scale_fill_got(option = "wildfire", discrete = TRUE) + 
+  ggtitle("Wildfire")
+grid.arrange(g1, g2, g3, g4, ncol = 2, nrow = 2)
+```
+
+For more examples, see here: https://github.com/aljrico/gameofthrones
+
+
+# The wesanderson package
+
+Here is another package with color themes based on Wes Anderson movies.
+
+```{r}
+library(wesanderson)
+g <- ggplot(mtcars, aes(x = gear, fill = factor(gear))) +
+  geom_bar()
+
+g1 <- g + scale_fill_manual(values = wes_palette("Royal1")) + 
+  ggtitle("The Royal Tenenbaums")
+g2 <- g + scale_fill_manual(values = wes_palette("Zissou1")) + 
+  ggtitle("The Life Aquatic")
+g3 <- g + scale_fill_manual(values = wes_palette("Moonrise3")) + 
+  ggtitle("Moonrise Kingdom")
+g4 <- g + scale_fill_manual(values = wes_palette("Rushmore1")) + 
+  ggtitle("Rushmore")
+grid.arrange(g1, g2, g3, g4, ncol = 2, nrow = 2)
+```
+
+
+# The ggthemes package
+
+There is even a package that lets you choose themes that make your whole graph
+look like graphs from publications like The Economist, The Wall Street Journal,
+and FiveThirtyEight (Note: Several publications actually use ggplot2 for their
+graphs. The BBC is another one that I know of.)
+
+```{r}
+library(ggthemes)
+g <- ggplot(mtcars, aes(x = wt, y = mpg, color = factor(gear))) +
+  geom_point() +
+  labs(color = "Gears", x = "Weight", y = "MPG")
+
+g1 <- g + theme_economist() + ggtitle("The Economist")
+g2 <- g + theme_fivethirtyeight() + ggtitle("FiveThirtyEight")
+g3 <- g + theme_wsj() + ggtitle("The Wall Street Journal")
+g4 <- g + theme_excel() + ggtitle("The Excel")
+grid.arrange(g1, g2, g3, g4, ncol = 2, nrow = 2)
+```
