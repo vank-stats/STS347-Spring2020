@@ -144,3 +144,120 @@ ggplot(mydata, aes(x = row, y = point.estimate, color = contain_mu)) +
                          " simulations captured mu"),
        x = "",
        y = "Confidence Intervals")
+
+
+
+
+
+# Paired t tests - p. 8
+
+# Create mysleep data frame in right hand column
+library(dplyr)
+library(tidyr)
+mysleep <- pivot_wider(sleep, id_cols = ID,
+                       names_from = group, 
+                       names_prefix = "extra", 
+                       values_from = extra)
+mysleep <- mutate(mysleep, 
+                  diff = extra1 - extra2)
+
+# Formula syntax (response ~ explanatory or quantitative ~ categorical)
+t.test(extra ~ group, paired = TRUE, data = sleep)
+
+# Non-formula syntax - using pre-calculated differences
+# Output says One Sample t-test, but is otherwise identical to above
+t.test(mysleep$diff)
+
+# Non-formula syntax - entering two vectors to take differences of
+t.test(mysleep$extra1, mysleep$extra2, paired = TRUE)
+
+
+
+
+
+# Two independent samples tests - p. 9
+
+# Create a dataset called myiris containing two plant species
+library(dplyr)
+myiris <- filter(iris, Species != "setosa")
+
+# Use formula syntax (Quantitative ~ Categorical)
+t.test(Sepal.Length ~ Species, data = myiris)
+
+# Use standard approach (two quantitative vectors)
+SL_ver <- filter(myiris, Species == "versicolor")$Sepal.Length
+SL_vir <- filter(myiris, Species == "virginica")$Sepal.Length
+t.test(SL_vir, SL_ver)
+
+# Re-do tests with equal variances assumption
+t.test(Sepal.Length ~ Species, data = myiris, var.equal = TRUE)
+t.test(SL_vir, SL_ver, var.equal = TRUE)
+
+
+
+
+
+# Example - Investigate differences between var assumptions - p. 12
+
+set.seed(6493)
+x1 <- rnorm(100, 100, 5)
+x2 <- rnorm(20, 100, 15)
+var(x1)  
+var(x2)
+t.test(x1, x2, var.equal = TRUE)
+t.test(x1, x2, var.equal = FALSE)
+val <- c(x1, x2)
+grp <- c(rep("A", 100), rep("B", 20)) 
+mydata <- data.frame(val, grp)
+ggplot(mydata, aes(x=grp, y=val)) +
+  geom_boxplot()
+
+# Swap the standard deviations
+set.seed(6493)
+x1 <- rnorm(100, 100, 15)
+x2 <- rnorm(20, 100, 5)
+var(x1)  
+var(x2)
+t.test(x1, x2, var.equal = TRUE)
+t.test(x1, x2, var.equal = FALSE)
+val <- c(x1, x2)
+grp <- c(rep("A", 100), rep("B", 20)) 
+mydata <- data.frame(val, grp)
+ggplot(mydata, aes(x=grp, y=val)) +
+  geom_boxplot()
+
+# Both populations have sd of 15
+set.seed(6493)
+x1 <- rnorm(100, 100, 15)
+x2 <- rnorm(20, 100, 15)
+var(x1)  
+var(x2)
+t.test(x1, x2, var.equal = TRUE)
+t.test(x1, x2, var.equal = FALSE)
+val <- c(x1, x2)
+grp <- c(rep("A", 100), rep("B", 20)) 
+mydata <- data.frame(val, grp)
+ggplot(mydata, aes(x=grp, y=val)) +
+  geom_boxplot()
+
+# Both samples are of size n = 100
+set.seed(6493)
+x1 <- rnorm(100, 100, 5)
+x2 <- rnorm(100, 100, 15)
+var(x1)  
+var(x2)
+t.test(x1, x2, var.equal = TRUE)
+t.test(x1, x2, var.equal = FALSE)
+val <- c(x1, x2)
+grp <- c(rep("A", 100), rep("B", 100)) 
+mydata <- data.frame(val, grp)
+ggplot(mydata, aes(x=grp, y=val)) +
+  geom_boxplot()
+
+
+
+
+
+# Paired data as two independent samples?
+t.test(mysleep$extra1, mysleep$extra2, paired = TRUE)
+t.test(mysleep$extra1, mysleep$extra2)
