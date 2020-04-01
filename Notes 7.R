@@ -1,3 +1,23 @@
+# d stands for density and calculates the probability density function
+# at some value x (i.e. tells us how tall the curve is at that point)
+
+dnorm(0) # At x = 0, the pdf of x is around 0.4 (see the graph later)
+
+# p stands for probability and it calculates the probability of a value below
+# whatever we enter for q
+
+pnorm(0) # There is a 0.5 probability of getting an x value less than 0
+pnorm(-1.96) # There is a 0.025 probability of an x value less than -1.96
+
+# q stands for quantile and it calculates the value that has probability p
+# to the left of it (i.e. the reverse of pnorm())
+
+qnorm(0.5) # The x value with probability 0.5 to the left of it is x = 0
+qnorm(0.025) # The x value with probability 0.025 to the left of it x = -1.96
+
+
+
+
 library(ggplot2)
 library(gridExtra)
 
@@ -241,3 +261,17 @@ ggplot(NULL,aes(sample= myts)) +
 
 
 # Additional examples (p. 13) - added later
+
+# Normal Table Examples
+pnorm(1.28, lower.tail = FALSE)
+pnorm(-1.28, lower.tail = FALSE)
+pnorm(1.8, lower.tail = FALSE)
+pnorm(0.9)
+
+# F Table Examples
+pf(1.3, 12, 6)
+pf(1.3, 12, 6, lower.tail = FALSE)
+
+# Inverse Probability Examples
+qt(.975, 12)
+qnorm(.05, lower.tail = FALSE)
